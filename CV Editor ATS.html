@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV_Audri_Tantri_Pratiwi</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#17212b;--mut:#5b6773;--line:#dbe1e7;--bg:#e9eef2;--card:#fff;--ac:#0e7490;--ac2:#e0f2f7;--ok:#15803d;--bad:#b91c1c;--r:10px}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+.app{display:grid;grid-template-columns:minmax(360px,460px) 1fr;height:100vh}
+#editor{overflow:auto;background:var(--card);border-right:1px solid var(--line);padding:0 0 60px}
+.top{position:sticky;top:0;z-index:5;background:var(--card);padding:14px 16px;border-bottom:1px solid var(--line)}
+.top h1{font-size:16px;margin:0 0 10px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:#fff;padding:7px 11px;color:var(--ink)}
+button:hover{border-color:var(--ac)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.pri{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:600}
+.ai{background:var(--ac2);color:var(--ac);border-color:#b6e0ea;font-size:12px;padding:4px 9px;font-weight:600}
+.sm{font-size:12px;padding:4px 8px}.del{color:var(--bad)}
+details{border-bottom:1px solid var(--line)}
+summary{padding:13px 16px;font-weight:700;cursor:pointer;list-style:none}
+summary::after{content:"+";float:right;color:var(--mut)}details[open] summary::after{content:"–"}
+.body{padding:0 16px 16px}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 3px;font-weight:600}
+.lr{display:flex;justify-content:space-between;align-items:end}
+input,textarea,select{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:76px;resize:vertical}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{border:1px solid var(--line);border-radius:var(--r);padding:4px 12px 12px;margin-top:12px;background:#fafcfd}
+.ats{margin:0;padding:12px 16px;background:var(--ac2);border-bottom:1px solid #b6e0ea}
+.score{font-size:22px;font-weight:700;color:var(--ac)}
+.chk{list-style:none;margin:6px 0 0;padding:0;font-size:12.5px}
+.chk li{padding:1px 0}.chk .y{color:var(--ok)}.chk .n{color:var(--bad)}
+#aibox{position:fixed;left:16px;bottom:16px;width:min(428px,calc(100vw - 32px));max-height:55vh;overflow:auto;background:#fff;border:1px solid var(--ac);border-radius:12px;box-shadow:0 12px 34px #0003;padding:12px;z-index:20;display:none}
+#aibox .s{border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;white-space:pre-wrap;font-size:13px}
+.hint{font-size:12px;color:var(--mut)}
+#pv{overflow:auto;padding:24px 16px 60px}
+.paper{background:#fff;width:210mm;max-width:100%;min-height:297mm;margin:0 auto 24px;padding:15mm 16mm;box-shadow:0 2px 18px #0002;color:#000;font-family:var(--cvf,Arial,Helvetica,sans-serif);font-size:var(--cvs,10.5pt);line-height:1.38}
+.paper h1{font-size:1.9em;margin:0;text-align:center}
+.paper .ct{text-align:center;margin:3px 0 8px}
+.paper h2{font-size:1.02em;text-transform:uppercase;letter-spacing:.04em;border-bottom:1.2px solid #000;margin:13px 0 5px;padding-bottom:2px}
+.paper .row{display:flex;justify-content:space-between;gap:10px}
+.paper ul{margin:3px 0 6px;padding-left:18px}.paper p{margin:3px 0}
+.paper table{width:100%;border-collapse:collapse;margin-top:4px}
+.paper td{border:1px solid #888;padding:4px 7px;vertical-align:top}.paper td:first-child{width:36%;font-weight:700;background:#f4f4f4}
+.sig{display:flex;justify-content:space-between;margin-top:22px}.sig div{width:45%;text-align:center}
+.sig .box{height:64px}
+@media(max-width:900px){.app{display:block;height:auto}#editor{max-height:none}#pv{padding:12px 0}.paper{padding:10mm}}
+@media print{
+ @page{size:A4;margin:15mm}
+ body{background:#fff}.app{display:block;height:auto}#editor,#aibox{display:none!important}
+ #pv{padding:0;overflow:visible}.paper{box-shadow:none;margin:0;padding:0;width:auto;min-height:0}
+ .paper.form{break-before:page}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div id="editor">
+ <div class="top">
+  <h1>Editor CV (format ATS)</h1>
+  <div class="btns">
+   <button class="pri" data-act="pdf">Unduh PDF</button>
+   <button data-act="exp">Simpan data</button>
+   <button data-act="imp">Buka data</button>
+   <button class="del" data-act="reset">Reset</button>
+   <input id="file" type="file" accept=".json" hidden>
+  </div>
+ </div>
+ <div class="ats" id="ats"></div>
+ <div id="forms"></div>
+</div>
+<div id="pv"><div class="paper" id="cv"></div><div class="paper form" id="lamp"></div></div>
+</div>
+<div id="aibox"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const DEF={
+ b:{name:'Audri Tantri Pratiwi',email:'audripratiwi02@gmail.com',phone:'081311001058',city:'Jakarta',link:''},
+ set:{target:'Staff Administrasi',font:'Arial, Helvetica, sans-serif',size:'10.5pt',form:true},
+ summary:'Fresh graduate Fakultas Psikologi Universitas Jayabaya (lulus 2024) dengan pengalaman magang sebagai Staff Tata Usaha di Kementerian Pemberdayaan Perempuan dan Perlindungan Anak.',
+ exp:[{role:'Staff Tata Usaha (Magang)',org:'Kementerian Pemberdayaan Perempuan dan Perlindungan Anak',loc:'Jakarta',start:'Januari 2019',end:'Maret 2019',
+  bullets:'Menerima surat masuk dan mengelola dokumen untuk proses pengarsipan.\nMengelola jadwal rapat dan mengikuti rapat mingguan sebagai notulen.\nMenerima panggilan telepon, meneruskan ke pihak yang dituju, dan memberikan informasi dasar kepada penelepon.'}],
+ edu:[{school:'Universitas Jayabaya',major:'S1 Psikologi',gpa:'IPK 3.43',start:'2020',end:'2024'},{school:'SMKN 1 Jakarta',major:'Perkantoran',gpa:'Nilai akhir 84.6',start:'2017',end:'2020'}],
+ skills:[{label:'Keterampilan Teknis',items:'Microsoft Office, Data Entry, Pengarsipan, Notulensi'},{label:'Keterampilan Pendukung',items:'Manajemen waktu, Kerja sama tim, Teliti, Disiplin, Komunikasi, Administrasi, Pemecahan masalah, Multitasking'}],
+ extra:[],
+ f:{warga:'Indonesia',sehat:'Sehat jasmani dan rohani',bahasa:'Indonesia (aktif)'}
+};
+const FF=[['posisi','Posisi yang dilamar'],['nama','Nama lengkap'],['ttl','Tempat, tanggal lahir'],['jk','Jenis kelamin',['','Perempuan','Laki-laki']],['agama','Agama'],['status','Status perkawinan',['','Belum menikah','Menikah','Cerai']],['warga','Kewarganegaraan'],['ktp','No. KTP (NIK)'],['alamatKtp','Alamat sesuai KTP','t'],['alamatDom','Alamat domisili','t'],['hp','No. HP / WhatsApp'],['email','Email'],['tinggi','Tinggi badan (cm)'],['berat','Berat badan (kg)'],['darah','Golongan darah'],['sim','SIM (jenis)'],['kendaraan','Kendaraan pribadi'],['sehat','Kondisi kesehatan'],['bahasa','Kemampuan bahasa'],['tempat','Bersedia ditempatkan di'],['mulai','Dapat mulai bekerja'],['gaji','Ekspektasi gaji'],['darurat','Kontak darurat (nama – hubungan – no. HP)'],['ref','Referensi (nama – jabatan – no. HP)'],['kota','Kota pembuatan formulir']];
+const KEY='cv_ats_v1',KK='cv_ats_apikey';
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+S=S||JSON.parse(JSON.stringify(DEF));
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const getp=p=>p.split('.').reduce((o,k)=>o&&o[k],S);
+const setp=(p,v)=>{const k=p.split('.'),l=k.pop();k.reduce((o,x)=>o[x],S)[l]=v};
+const bl=t=>String(t||'').split('\n').map(x=>x.trim()).filter(Boolean);
+
+/* ---------- editor ---------- */
+const inp=(p,l,t)=>`<label>${l}</label><input data-p="${p}" value="${esc(getp(p))}" ${t||''}>`;
+const ta=(p,l,kind,rows)=>`<div class="lr"><label>${l}</label><button class="ai" data-act="ai" data-k="${kind}" data-p="${p}">✨ Saran AI</button></div><textarea data-p="${p}" ${rows?`style="min-height:${rows}px"`:''}>${esc(getp(p))}</textarea>`;
+function renderEditor(){
+ const o=$('#forms'),op=[...document.querySelectorAll('details')].map(d=>d.open);
+ let h=`<details open><summary>Data diri</summary><div class="body">${inp('b.name','Nama lengkap')}<div class="g2"><div>${inp('b.email','Email')}</div><div>${inp('b.phone','No. HP')}</div><div>${inp('b.city','Kota')}</div><div>${inp('b.link','LinkedIn / portofolio')}</div></div>
+ ${inp('set.target','Posisi target (dipakai AI untuk kata kunci)')}
+ <div class="g2"><div><label>Font</label><select data-p="set.font"><option>Arial, Helvetica, sans-serif</option><option>Calibri, Carlito, sans-serif</option><option>"Times New Roman", serif</option></select></div><div><label>Ukuran</label><select data-p="set.size"><option>10pt</option><option>10.5pt</option><option>11pt</option></select></div></div>
+ <p class="hint">Format ATS: satu kolom, tanpa foto/tabel/ikon, judul bagian standar, teks asli (bisa diseleksi di PDF).</p></div></details>
+ <details open><summary>Ringkasan profesional</summary><div class="body">${ta('summary','Ringkasan (2–4 kalimat)','summary',110)}</div></details>
+ <details open><summary>Pengalaman kerja</summary><div class="body">`;
+ S.exp.forEach((e,i)=>{h+=`<div class="item"><div class="g2"><div>${inp(`exp.${i}.role`,'Jabatan')}</div><div>${inp(`exp.${i}.org`,'Perusahaan / instansi')}</div><div>${inp(`exp.${i}.start`,'Mulai')}</div><div>${inp(`exp.${i}.end`,'Selesai')}</div></div>${inp(`exp.${i}.loc`,'Lokasi')}${ta(`exp.${i}.bullets`,'Tugas & pencapaian (1 baris = 1 poin)','bullets',130)}<button class="sm del" data-act="del" data-l="exp" data-i="${i}">Hapus</button></div>`});
+ h+=`<p><button data-act="add" data-l="exp">+ Tambah pengalaman</button></p></div></details><details open><summary>Pendidikan</summary><div class="body">`;
+ S.edu.forEach((e,i)=>{h+=`<div class="item"><div class="g2"><div>${inp(`edu.${i}.school`,'Institusi')}</div><div>${inp(`edu.${i}.major`,'Jurusan / gelar')}</div><div>${inp(`edu.${i}.start`,'Mulai')}</div><div>${inp(`edu.${i}.end`,'Lulus')}</div></div>${inp(`edu.${i}.gpa`,'IPK / nilai')}<p><button class="sm del" data-act="del" data-l="edu" data-i="${i}">Hapus</button></p></div>`});
+ h+=`<p><button data-act="add" data-l="edu">+ Tambah pendidikan</button></p></div></details><details open><summary>Keterampilan</summary><div class="body">`;
+ S.skills.forEach((e,i)=>{h+=`<div class="item">${inp(`skills.${i}.label`,'Kategori')}${ta(`skills.${i}.items`,'Daftar (pisahkan koma)','skills',60)}<button class="sm del" data-act="del" data-l="skills" data-i="${i}">Hapus</button></div>`});
+ h+=`<p><button data-act="add" data-l="skills">+ Tambah kategori</button></p></div></details><details><summary>Sertifikasi, pelatihan, organisasi</summary><div class="body">`;
+ S.extra.forEach((e,i)=>{h+=`<div class="item"><div class="g2"><div>${inp(`extra.${i}.title`,'Nama')}</div><div>${inp(`extra.${i}.org`,'Penyelenggara')}</div></div>${inp(`extra.${i}.year`,'Tahun')}<p><button class="sm del" data-act="del" data-l="extra" data-i="${i}">Hapus</button></p></div>`});
+ h+=`<p><button data-act="add" data-l="extra">+ Tambah</button></p></div></details><details><summary>Formulir lampiran (data pribadi lengkap)</summary><div class="body"><label><input type="checkbox" data-c="set.form" ${S.set.form?'checked':''} style="width:auto"> Sertakan sebagai halaman terpisah di PDF</label>`;
+ FF.forEach(([k,l,t])=>{const p='f.'+k;h+=Array.isArray(t)?`<label>${l}</label><select data-p="${p}">${t.map(x=>`<option ${getp(p)==x?'selected':''}>${x}</option>`).join('')}</select>`:t=='t'?`<label>${l}</label><textarea data-p="${p}" style="min-height:52px">${esc(getp(p))}</textarea>`:inp(p,l)});
+ h+=`</div></details><details><summary>Pengaturan saran AI</summary><div class="body"><label>API key Anthropic (opsional)</label><input id="key" type="password" placeholder="sk-ant-..." value="${esc(localStorage.getItem(KK)||'')}"><p class="hint">Tanpa key, saran dibuat lokal (aturan penulisan CV). Dengan key, saran dari Claude. Key hanya tersimpan di browser ini dan dikirim langsung ke api.anthropic.com.</p></div></details>`;
+ o.innerHTML=h;
+ o.querySelectorAll('select[data-p]').forEach(s=>{const v=getp(s.dataset.p);if(v)s.value=v});
+ document.querySelectorAll('details').forEach((d,i)=>{if(op[i]!==undefined)d.open=op[i]});
+}
+
+/* ---------- preview ---------- */
+function renderCV(){
+ const b=S.b,c=$('#cv');
+ c.style.setProperty('--cvf',S.set.font);c.style.setProperty('--cvs',S.set.size);$('#lamp').style.setProperty('--cvf',S.set.font);$('#lamp').style.setProperty('--cvs',S.set.size);
+ let h=`<h1>${esc(b.name)}</h1><div class="ct">${[b.city,b.phone,b.email,b.link].filter(Boolean).map(esc).join(' | ')}</div>`;
+ if(S.summary.trim())h+=`<h2>Ringkasan Profesional</h2><p>${esc(S.summary)}</p>`;
+ if(S.exp.length)h+='<h2>Pengalaman Kerja</h2>'+S.exp.map(e=>`<div class="row"><b>${esc(e.role)}</b><span>${esc([e.start,e.end].filter(Boolean).join(' – '))}</span></div><div>${esc([e.org,e.loc].filter(Boolean).join(', '))}</div><ul>${bl(e.bullets).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
+ if(S.edu.length)h+='<h2>Pendidikan</h2>'+S.edu.map(e=>`<div class="row"><b>${esc(e.school)}</b><span>${esc([e.start,e.end].filter(Boolean).join(' – '))}</span></div><div>${esc([e.major,e.gpa].filter(Boolean).join(' | '))}</div>`).join('<div style="height:5px"></div>');
+ if(S.skills.length)h+='<h2>Keterampilan</h2>'+S.skills.map(s=>`<p><b>${esc(s.label)}:</b> ${esc(s.items)}</p>`).join('');
+ if(S.extra.length)h+='<h2>Sertifikasi, Pelatihan &amp; Organisasi</h2>'+S.extra.map(e=>`<div class="row"><span><b>${esc(e.title)}</b>${e.org?', '+esc(e.org):''}</span><span>${esc(e.year)}</span></div>`).join('');
+ c.innerHTML=h;
+ const l=$('#lamp');l.style.display=S.set.form?'':'none';
+ const F={...S.f};F.nama=F.nama||b.name;F.hp=F.hp||b.phone;F.email=F.email||b.email;F.posisi=F.posisi||S.set.target;
+ l.innerHTML=`<h1>Formulir Data Pribadi</h1><div class="ct">Lampiran Curriculum Vitae</div><table>${FF.filter(f=>f[0]!='kota').map(([k,lb])=>`<tr><td>${lb}</td><td>${esc(F[k]).replace(/\n/g,'<br>')||'&nbsp;'}</td></tr>`).join('')}</table><p style="margin-top:12px">Dengan ini saya menyatakan bahwa seluruh data di atas adalah benar dan dapat dipertanggungjawabkan.</p><div class="sig"><div></div><div>${esc(F.kota||'Jakarta')}, ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}<div class="box"></div><b>${esc(b.name)}</b></div></div>`;
+ document.title='CV_'+(b.name||'').replace(/\s+/g,'_');
+ renderATS();
+}
+
+/* ---------- ATS check ---------- */
+const FIX=[[/mengelolah/gi,'mengelola'],[/\bdi tuju\b/gi,'dituju'],[/\bdi tujukan\b/gi,'ditujukan']];
+const VERB=/^(me|mem|men|meng|meny|ber|per|di|ter)[a-z]{3,}/i;
+function renderATS(){
+ const bs=S.exp.flatMap(e=>bl(e.bullets)),sk=S.skills.join(' ')+S.skills.map(s=>s.items).join(',');
+ const typo=JSON.stringify(S).match(/mengelolah|\bdi tuju\b/i);
+ const ch=[[/^\S+@\S+\.\S+$/.test(S.b.email),'Email valid'],[/\d{9,}/.test(S.b.phone.replace(/\D/g,'')),'No. HP terisi'],[S.summary.length>=120&&S.summary.length<=550,'Ringkasan 120–550 karakter ('+S.summary.length+')'],[S.exp.length>0&&S.exp.every(e=>bl(e.bullets).length>=2),'Tiap pengalaman punya ≥2 poin'],[bs.length>0&&bs.every(x=>VERB.test(x)),'Poin diawali kata kerja'],[bs.some(x=>/\d/.test(x)),'Ada angka/pencapaian terukur'],[sk.split(',').length>=8,'Keterampilan ≥8 kata kunci'],[!!S.edu.length,'Pendidikan terisi'],[!typo,'Tidak ada typo yang dikenali']];
+ const sc=Math.round(ch.filter(x=>x[0]).length/ch.length*100);
+ $('#ats').innerHTML=`<div class="lr"><div><span class="score">${sc}</span> <b>/100 skor kesiapan ATS</b></div>${typo?'<button class="sm" data-act="fix">Perbaiki typo</button>':''}</div><ul class="chk">${ch.map(([o,m])=>`<li class="${o?'y':'n'}">${o?'✓':'✗'} ${m}</li>`).join('')}</ul>`;
+}
+
+/* ---------- AI suggestions ---------- */
+const clean=t=>FIX.reduce((s,[r,v])=>s.replace(r,v),t).replace(/[ \t]+/g,' ').trim();
+const UP={Menerima:'Menangani',Mengikuti:'Berpartisipasi aktif dalam',Memberikan:'Menyampaikan',Membantu:'Mendukung',Melakukan:'Menjalankan'};
+const KW={admin:['Microsoft Excel','Microsoft Word','Microsoft PowerPoint','Google Workspace','Korespondensi','Pengarsipan Dokumen','Notulensi','Pelayanan Prima','Penjadwalan','Bahasa Inggris'],hr:['Rekrutmen','Psikotes','Wawancara','Administrasi Personalia','Onboarding','Database Karyawan','Microsoft Excel','Komunikasi Interpersonal']};
+function local(k,t,p){
+ if(k=='bullets'){const L=bl(t).map(clean);
+  const B=L.map(x=>{const w=x.split(' ')[0];return UP[w]?x.replace(w,UP[w]):x});
+  const C=B.map(x=>/\d/.test(x)?x:x.replace(/[.]?$/,' (tambahkan angka: jumlah/frekuensi/hasil).'));
+  return [{t:'Rapikan & perbaiki ejaan',x:L.join('\n')},{t:'Kata kerja lebih kuat',x:B.join('\n')},{t:'Dengan penanda metrik (isi angka sendiri)',x:C.join('\n')}]}
+ if(k=='summary'){const e=S.edu[0]||{},x=S.exp[0]||{},tg=S.set.target||'posisi yang dilamar',sk=(S.skills[0]||{}).items||'',s3=sk.split(',').slice(0,3).join(', ').trim();
+  return [{t:'Formal ringkas',x:`Lulusan ${e.major||''} ${e.school||''} (${e.end||''}), ${e.gpa||''}. Berpengalaman sebagai ${x.role||''} di ${x.org||''}. Terampil dalam ${s3}. Siap berkontribusi sebagai ${tg}.`.replace(/\s+/g,' ')},
+  {t:'Fokus kata kunci posisi',x:`${tg} fresh graduate dengan latar belakang ${e.major||''}, memiliki pengalaman pengelolaan surat, pengarsipan, penjadwalan rapat, dan notulensi. Teliti, disiplin, dan mampu bekerja sama dalam tim.`},
+  {t:'Fokus nilai tambah',x:`Fresh graduate ${e.major||''} yang memahami komunikasi dan perilaku manusia, ditambah pengalaman administrasi perkantoran. Mencari peran ${tg} untuk menerapkan ketelitian, manajemen waktu, dan kemampuan multitasking.`}]}
+ const pool=KW[/hr|rekrut|psikolog/i.test(S.set.target)?'hr':'admin'],have=t.toLowerCase(),miss=pool.filter(w=>!have.includes(w.toLowerCase()));
+ return miss.length?[{t:'Kata kunci yang belum ada',x:miss.slice(0,5).join(', '),add:1},{t:'Tambahan lain',x:miss.slice(5).join(', '),add:1}].filter(v=>v.x):[{t:'Sudah lengkap',x:'',add:1}];
+}
+async function remote(k,t,key){
+ const task={bullets:'Perbaiki poin pengalaman kerja (satu baris satu poin) agar diawali kata kerja aktif dan ramah ATS',summary:'Tulis ulang ringkasan profesional 2–4 kalimat',skills:'Sarankan kata kunci keterampilan tambahan yang relevan, dipisahkan koma'}[k];
+ const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:`Kamu pakar CV ATS di Indonesia. Tugas: ${task}. Posisi target: ${S.set.target}. Latar belakang: ${JSON.stringify({edu:S.edu,exp:S.exp,skills:S.skills})}. Teks saat ini:\n${t}\n\nBeri 3 alternatif Bahasa Indonesia. Jangan mengarang fakta atau angka; pakai [isi angka] bila perlu. Balas HANYA array JSON berisi string (untuk poin, pisahkan baris dengan \\n).`}]})});
+ if(!r.ok)throw new Error('API '+r.status);
+ const d=await r.json(),txt=d.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+ return JSON.parse(txt).map((x,i)=>({t:'Saran Claude '+(i+1),x:String(x),add:k=='skills'}));
+}
+let ctx=null;
+async function runAI(k,p){
+ const box=$('#aibox');box.style.display='block';box.innerHTML='<b>Menyusun saran…</b>';
+ const t=getp(p),key=localStorage.getItem(KK);let v,note='';
+ try{v=key?await remote(k,t,key):local(k,t,p)}catch(e){v=local(k,t,p);note=`<p class="hint">Claude gagal (${esc(e.message)}); memakai saran lokal.</p>`}
+ ctx={p,v};
+ box.innerHTML=`<div class="lr"><b>Saran AI</b><button class="sm" data-act="close">Tutup</button></div>${note}${v.map((s,i)=>`<div class="s"><b>${esc(s.t)}</b>\n${esc(s.x)||'<i>Tidak ada saran tambahan.</i>'}<div style="margin-top:6px">${s.x?`<button class="sm pri" data-act="use" data-i="${i}">${s.add?'Tambahkan':'Pakai'}</button>`:''}</div></div>`).join('')}`;
+}
+
+/* ---------- events ---------- */
+const ed=$('#editor');
+ed.addEventListener('input',e=>{const t=e.target;
+ if(t.id=='key'){t.value.trim()?localStorage.setItem(KK,t.value.trim()):localStorage.removeItem(KK);return}
+ if(t.dataset.p){setp(t.dataset.p,t.value);save();renderCV()}});
+ed.addEventListener('change',e=>{const t=e.target;if(t.dataset.c){setp(t.dataset.c,t.checked);save();renderCV()}});
+const NEW={exp:{role:'',org:'',loc:'',start:'',end:'',bullets:''},edu:{school:'',major:'',gpa:'',start:'',end:''},skills:{label:'',items:''},extra:{title:'',org:'',year:''}};
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,d=b.dataset;
+ if(a=='pdf')window.print();
+ else if(a=='add'){S[d.l].push({...NEW[d.l]});save();renderEditor();renderCV()}
+ else if(a=='del'){if(confirm('Hapus entri ini?')){S[d.l].splice(+d.i,1);save();renderEditor();renderCV()}}
+ else if(a=='ai')runAI(d.k,d.p);
+ else if(a=='close')$('#aibox').style.display='none';
+ else if(a=='use'){const s=ctx.v[+d.i];const cur=getp(ctx.p);setp(ctx.p,s.add?(cur?cur.replace(/[,\s]+$/,'')+', ':'')+s.x:s.x);save();renderEditor();renderCV();$('#aibox').style.display='none'}
+ else if(a=='fix'){S=JSON.parse(FIX.reduce((s,[r,v])=>s.replace(r,v),JSON.stringify(S)));save();renderEditor();renderCV()}
+ else if(a=='exp'){const u=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'})),l=document.createElement('a');l.href=u;l.download='data_cv.json';l.click()}
+ else if(a=='imp')$('#file').click();
+ else if(a=='reset'){if(confirm('Kembalikan ke data awal? Perubahan akan hilang.')){S=JSON.parse(JSON.stringify(DEF));save();renderEditor();renderCV()}}
+});
+$('#file').addEventListener('change',async e=>{try{S=JSON.parse(await e.target.files[0].text());save();renderEditor();renderCV()}catch(x){alert('File tidak valid')}});
+renderEditor();renderCV();
+</script>
+</body>
+</html>
